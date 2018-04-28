@@ -51,14 +51,14 @@ public class ConsumeUtil {
             e.printStackTrace();
             XposedBridge.log("write faile" + e.getMessage());
         }finally {
-            try {
-                bw.close();
-                osw.close();
-                fos.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-                XposedBridge.log("close faile" + e.getMessage());
-            }
+//            try {
+//                bw.close();
+//                osw.close();
+//                fos.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//                XposedBridge.log("close faile" + e.getMessage());
+//            }
         }
     }
 

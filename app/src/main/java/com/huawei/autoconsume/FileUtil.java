@@ -14,8 +14,8 @@ public class FileUtil {
     private static FileUtil instance;
 
     private FileUtil(){
-//        String path1 = "sdcard" + " /u2test/Uiautomation";
-        String path1 = Environment.getExternalStorageDirectory() + " /u2test/Uiautomation";
+//        String path1 = "sdcard" + "/u2test/Uiautomation";
+        String path1 = Environment.getExternalStorageDirectory() + "/traverseTest";
         String path2 = path1 + "/consume.txt";
         File path = new File(path1);
         logFile = new File(path2);

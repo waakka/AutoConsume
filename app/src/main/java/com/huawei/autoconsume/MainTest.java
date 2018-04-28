@@ -20,7 +20,7 @@ public class MainTest implements IXposedHookLoadPackage {
 
 
     public static final int TYPE_NORMAL = 0;
-    public static final int TYPE_LOGIN = 0;
+    public static final int TYPE_LOGIN = 1;
 
     private String packageName;
 
@@ -78,6 +78,30 @@ public class MainTest implements IXposedHookLoadPackage {
                     }
                 });
 
+
+        /**
+         * 遍历点击，界面起始节点
+         */
+        findAndHookMethod("com.huawei.traversetest.traverseutils",lpparam.classLoader,
+                "noticXposed", int.class,new XC_MethodHook(){
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        //TODO 记录是否是登录操作（type）,deviceClick方法传递
+                        type = (Integer) param.args[0];
+                        //TODO 记录最后一次点击的时间
+                        lastClickTime = System.currentTimeMillis();
+                        //TODO 记录最后一次点击时当前activityName ,deviceClick方法传递,对比获得焦点时记录的activityName是否准确
+//                                lastActivityName = "";
+                    }
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+//                    XposedBridge.log("****************结束event事件****************");
+                    }
+                });
+
+        /**
+         * 界面绘制结束hook节点
+         */
         findAndHookMethod("android.app.Activity",lpparam.classLoader,
                 "onWindowFocusChanged", boolean.class,new XC_MethodHook(){
                     @Override
