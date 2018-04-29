@@ -1,5 +1,7 @@
 package com.huawei.autoconsume;
 
+import android.content.Context;
+
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -35,30 +37,29 @@ public class ConsumeUtil {
 
     public static void write(String msg){
         FileOutputStream fos = null;
-        OutputStreamWriter osw = null;
         BufferedWriter bw = null;
 
-
         try {
-            fos = new FileOutputStream(FileUtil.getInstance().logFile.getAbsoluteFile());
-            osw = new OutputStreamWriter(fos,"utf-8");
-            bw = new BufferedWriter(osw);
+            fos = new FileOutputStream(FileUtil.getInstance().getLogFile(),true);
+            bw = new BufferedWriter(new OutputStreamWriter(fos));
             bw.write(msg);
+            bw.flush();
+            XposedBridge.log("write file success ");
         } catch (FileNotFoundException e) {
-            XposedBridge.log("creat IOfile faile:" + e.getMessage());
             e.printStackTrace();
+            XposedBridge.log("FileNotFoundException " + e.getMessage());
         } catch (IOException e) {
             e.printStackTrace();
-            XposedBridge.log("write faile" + e.getMessage());
-        }finally {
-//            try {
-//                bw.close();
-//                osw.close();
-//                fos.close();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//                XposedBridge.log("close faile" + e.getMessage());
-//            }
+            XposedBridge.log("IOException " + e.getMessage());
+        } finally {
+            try {
+                if (bw != null)
+                    bw.close();
+                if (fos != null)
+                    fos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

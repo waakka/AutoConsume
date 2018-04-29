@@ -82,22 +82,22 @@ public class MainTest implements IXposedHookLoadPackage {
         /**
          * 遍历点击，界面起始节点
          */
-        findAndHookMethod("com.huawei.traversetest.traverseutils",lpparam.classLoader,
-                "noticXposed", int.class,new XC_MethodHook(){
-                    @Override
-                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                        //TODO 记录是否是登录操作（type）,deviceClick方法传递
-                        type = (Integer) param.args[0];
-                        //TODO 记录最后一次点击的时间
-                        lastClickTime = System.currentTimeMillis();
-                        //TODO 记录最后一次点击时当前activityName ,deviceClick方法传递,对比获得焦点时记录的activityName是否准确
-//                                lastActivityName = "";
-                    }
-                    @Override
-                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-//                    XposedBridge.log("****************结束event事件****************");
-                    }
-                });
+//        findAndHookMethod("com.huawei.traversetest.traverseutils",lpparam.classLoader,
+//                "noticXposed", int.class,new XC_MethodHook(){
+//                    @Override
+//                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+//                        //TODO 记录是否是登录操作（type）,deviceClick方法传递
+//                        type = (Integer) param.args[0];
+//                        //TODO 记录最后一次点击的时间
+//                        lastClickTime = System.currentTimeMillis();
+//                        //TODO 记录最后一次点击时当前activityName ,deviceClick方法传递,对比获得焦点时记录的activityName是否准确
+////                                lastActivityName = "";
+//                    }
+//                    @Override
+//                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+////                    XposedBridge.log("****************结束event事件****************");
+//                    }
+//                });
 
         /**
          * 界面绘制结束hook节点
@@ -131,7 +131,8 @@ public class MainTest implements IXposedHookLoadPackage {
                                     consume.setType(type);
                                     Gson gson = new Gson();
                                     String toJson = gson.toJson(consume);
-                                    ConsumeUtil.showLog("未知跳转==>" + toJson);
+//                                    ConsumeUtil.showLog("未知跳转==>" + toJson + "\n");
+                                    ConsumeUtil.showLog("未知跳转==>" + consume.toString());
                                 }else{
                                     Consume consume = new Consume();
                                     consume.setStartActivity(lastActivityName);
@@ -141,7 +142,8 @@ public class MainTest implements IXposedHookLoadPackage {
                                     consume.setType(type);
                                     Gson gson = new Gson();
                                     String toJson = gson.toJson(consume);
-                                    ConsumeUtil.showLog("点击跳转==>" + toJson);
+//                                    ConsumeUtil.showLog("点击跳转==>" + toJson + "\n");
+                                    ConsumeUtil.showLog("点击跳转==>" + consume.toString());
                                 }
                                 lastActivityName = curActivityName;
                             }

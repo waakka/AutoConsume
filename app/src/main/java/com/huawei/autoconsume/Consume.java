@@ -54,14 +54,23 @@ public class Consume {
         this.type = type;
     }
 
+//    @Override
+//    public String toString() {
+//        return "Consume{" +
+//                "startTime=" + ConsumeUtil.getTimeStr(startTime) +
+//                ", startActivity='" + startActivity + '\'' +
+//                ", stopTime=" + ConsumeUtil.getTimeStr(stopTime) +
+//                ", stoptActivity='" + stoptActivity + '\'' +
+//                ", type=" + type +
+//                "}\n";
+//    }
     @Override
     public String toString() {
-        return "Consume{" +
-                "startTime=" + ConsumeUtil.getTimeStr(startTime) +
-                ", startActivity='" + startActivity + '\'' +
-                ", stopTime=" + ConsumeUtil.getTimeStr(stopTime) +
-                ", stoptActivity='" + stoptActivity + '\'' +
-                ", type=" + type +
-                '}';
+        return getType() + "|" +
+                getStartActivity() + "|" +
+                getStoptActivity() + "|" +
+                getStartTime() + "|" +
+                getStopTime() +
+                "\n";
     }
 }

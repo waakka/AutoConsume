@@ -9,13 +9,18 @@ import de.robv.android.xposed.XposedBridge;
 
 public class FileUtil {
 
-    public File logFile;
+    private File logFile;
 
     private static FileUtil instance;
 
     private FileUtil(){
-//        String path1 = "sdcard" + "/u2test/Uiautomation";
-        String path1 = Environment.getExternalStorageDirectory() + "/traverseTest";
+
+
+    }
+
+    public File getLogFile(){
+        String path1 = "sdcard" + "/traverseTest";
+//        String path1 = Environment.getExternalStorageDirectory() + "/traverseTest";
         String path2 = path1 + "/consume.txt";
         File path = new File(path1);
         logFile = new File(path2);
@@ -31,7 +36,7 @@ public class FileUtil {
                 XposedBridge.log("creat file faile " + e.getMessage());
             }
         }
-
+        return logFile;
     }
 
     public static FileUtil getInstance(){
