@@ -9,13 +9,34 @@ import de.robv.android.xposed.XposedBridge;
 
 public class FileUtil {
 
+    /**
+     * 日志文件
+     */
     private File logFile;
+    /**
+     * 被测应用包名
+     */
+    private String packageName = "";
 
     private static FileUtil instance;
 
     private FileUtil(){
 
 
+    }
+
+    /**
+     * 解析traverseConfig文件获取被测应用包名
+     * 每次创建日志文件时重新解析一次配置文件
+     * @return
+     */
+    private String getPackageNameFromConfig(){
+        String name = "";
+        return name;
+    }
+
+    public String getPackageName(){
+        return packageName;
     }
 
     public File getLogFile(){
@@ -30,6 +51,7 @@ public class FileUtil {
         if (!logFile.exists()){
             try {
                 path.createNewFile();
+                packageName = getPackageNameFromConfig();
                 XposedBridge.log("creat file success filePath=" + logFile.getAbsolutePath());
             } catch (IOException e) {
                 e.printStackTrace();

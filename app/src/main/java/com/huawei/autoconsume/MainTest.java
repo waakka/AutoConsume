@@ -72,6 +72,7 @@ public class MainTest implements IXposedHookLoadPackage {
                                 break;
                         }
                     }
+
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
 //                    XposedBridge.log("****************结束event事件****************");
@@ -124,15 +125,13 @@ public class MainTest implements IXposedHookLoadPackage {
                                     //adb启动acctivity或app内部自动跳转或back、home等造成
                                     //暂不处理
                                     Consume consume = new Consume();
-//                                    consume.setStartActivity(lastActivityName);
-//                                    consume.setStartTime(lastClickTime);
+                                    //TODO 起始时间及起始activityName暂不记录
+                                    consume.setStartActivity("");
+                                    consume.setStartTime(0);
                                     consume.setStoptActivity(curActivityName);
                                     consume.setStopTime(curTime);
                                     consume.setType(type);
-                                    Gson gson = new Gson();
-                                    String toJson = gson.toJson(consume);
-//                                    ConsumeUtil.showLog("未知跳转==>" + toJson + "\n");
-                                    ConsumeUtil.showLog("未知跳转==>" + consume.toString());
+                                    ConsumeUtil.showLog(consume.toString());
                                 }else{
                                     Consume consume = new Consume();
                                     consume.setStartActivity(lastActivityName);
@@ -140,10 +139,7 @@ public class MainTest implements IXposedHookLoadPackage {
                                     consume.setStoptActivity(curActivityName);
                                     consume.setStopTime(curTime);
                                     consume.setType(type);
-                                    Gson gson = new Gson();
-                                    String toJson = gson.toJson(consume);
-//                                    ConsumeUtil.showLog("点击跳转==>" + toJson + "\n");
-                                    ConsumeUtil.showLog("点击跳转==>" + consume.toString());
+                                    ConsumeUtil.showLog(consume.toString());
                                 }
                                 lastActivityName = curActivityName;
                             }
