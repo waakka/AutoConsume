@@ -9,8 +9,9 @@ public class Consume {
     private String stoptActivity;
     /**
      * 常规界面或登录界面
-     * 0：常规界面
-     * 1：登录界面
+     * 0：常规界面点击跳转
+     * 1：登录界面点击跳转
+     * 2：未知操作导致跳转back，home等
      */
     private int type;
 

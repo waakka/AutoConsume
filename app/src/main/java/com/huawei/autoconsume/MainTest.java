@@ -130,7 +130,7 @@ public class MainTest implements IXposedHookLoadPackage {
                                     consume.setStartTime(0);
                                     consume.setStoptActivity(curActivityName);
                                     consume.setStopTime(curTime);
-                                    consume.setType(type);
+                                    consume.setType(2);
                                     ConsumeUtil.showLog(consume.toString());
                                 }else{
                                     Consume consume = new Consume();
