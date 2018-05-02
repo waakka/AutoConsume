@@ -1,6 +1,7 @@
 package com.huawei.autoconsume;
 
 import android.os.Environment;
+import android.text.TextUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,56 +42,15 @@ public class FileUtil {
     private String getPackageNameFromConfig(){
         String name = "";
         File file = new File("sdcard/traverseConfig.txt");
-        if (file.exists()){
-            String encouding = "UTF-8";
-            String content = "";
-            BufferedReader reader = null;
-            InputStreamReader isr = null;
-            FileInputStream fis = null;
-            String line = "";
+        String configStr = getStrFromFile(file);
+        if (!TextUtils.isEmpty(configStr)){
             try {
-                fis = new FileInputStream(file);
-                isr = new InputStreamReader(fis,encouding);
-                reader = new BufferedReader(isr);
-                while ((line = reader.readLine()) != null){
-                    content += line;
-                }
-                JSONObject jsonObject = new JSONObject(content);
+                JSONObject jsonObject = new JSONObject(configStr);
                 name = jsonObject.getString("packageName");
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+                XposedBridge.log("解析得当前被测包名为：" + name);
             } catch (JSONException e) {
                 e.printStackTrace();
-            } finally {
-                if (reader != null){
-                    try {
-                        reader.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    reader = null;
-                }
-                if (isr != null){
-                    try {
-                        isr.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    isr = null;
-                }
-                if (fis != null){
-                    try {
-                        fis.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    fis = null;
-                }
-
+                XposedBridge.log(e.getMessage());
             }
         }
         return name;
@@ -102,7 +62,7 @@ public class FileUtil {
 
     public File getLogFile(){
         String path1 = "sdcard" + "/u2test/UiAutomation";
-//        String path1 = Environment.getExternalStorageDirectory() + "/traverseTest";
+//        String path1 = Environment.getExternalStorageDirectory() + "/u2test/UiAutomation";
         String path2 = path1 + "/Consume.txt";
         File path = new File(path1);
         logFile = new File(path2);
@@ -127,6 +87,69 @@ public class FileUtil {
             instance = new FileUtil();
         }
         return instance;
+    }
+
+    /**
+     * 读取文件中string
+     * @param file
+     * @return
+     */
+    private String getStrFromFile(File file){
+        String content = "";
+        if (file.exists()){
+            String encouding = "UTF-8";
+            BufferedReader reader = null;
+            InputStreamReader isr = null;
+            FileInputStream fis = null;
+            String line = "";
+            try {
+                fis = new FileInputStream(file);
+                isr = new InputStreamReader(fis,encouding);
+                reader = new BufferedReader(isr);
+                while ((line = reader.readLine()) != null){
+                    content += line;
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                XposedBridge.log(e.getMessage());
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+                XposedBridge.log(e.getMessage());
+            } catch (IOException e) {
+                e.printStackTrace();
+                XposedBridge.log(e.getMessage());
+            } finally {
+                if (reader != null){
+                    try {
+                        reader.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        XposedBridge.log(e.getMessage());
+                    }
+                    reader = null;
+                }
+                if (isr != null){
+                    try {
+                        isr.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        XposedBridge.log(e.getMessage());
+                    }
+                    isr = null;
+                }
+                if (fis != null){
+                    try {
+                        fis.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        XposedBridge.log(e.getMessage());
+                    }
+                    fis = null;
+                }
+
+            }
+        }
+        return content;
     }
 
 
