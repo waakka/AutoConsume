@@ -2,8 +2,16 @@ package com.huawei.autoconsume;
 
 import android.os.Environment;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 
 import de.robv.android.xposed.XposedBridge;
 
@@ -32,6 +40,59 @@ public class FileUtil {
      */
     private String getPackageNameFromConfig(){
         String name = "";
+        File file = new File("sdcard/traverseConfig.txt");
+        if (file.exists()){
+            String encouding = "UTF-8";
+            String content = "";
+            BufferedReader reader = null;
+            InputStreamReader isr = null;
+            FileInputStream fis = null;
+            String line = "";
+            try {
+                fis = new FileInputStream(file);
+                isr = new InputStreamReader(fis,encouding);
+                reader = new BufferedReader(isr);
+                while ((line = reader.readLine()) != null){
+                    content += line;
+                }
+                JSONObject jsonObject = new JSONObject(content);
+                name = jsonObject.getString("packageName");
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } finally {
+                if (reader != null){
+                    try {
+                        reader.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    reader = null;
+                }
+                if (isr != null){
+                    try {
+                        isr.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    isr = null;
+                }
+                if (fis != null){
+                    try {
+                        fis.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    fis = null;
+                }
+
+            }
+        }
         return name;
     }
 
@@ -40,9 +101,9 @@ public class FileUtil {
     }
 
     public File getLogFile(){
-        String path1 = "sdcard" + "/traverseTest";
+        String path1 = "sdcard" + "/u2test/UiAutomation";
 //        String path1 = Environment.getExternalStorageDirectory() + "/traverseTest";
-        String path2 = path1 + "/consume.txt";
+        String path2 = path1 + "/Consume.txt";
         File path = new File(path1);
         logFile = new File(path2);
         if (!path.exists()){
