@@ -1,6 +1,7 @@
 package com.huawei.autoconsume;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
@@ -12,6 +13,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import de.robv.android.xposed.XposedBridge;
+
+import static com.huawei.autoconsume.FileUtil.TAG;
 
 public class ConsumeUtil {
 
@@ -32,6 +35,7 @@ public class ConsumeUtil {
 
     public static void showLog(String msg){
         XposedBridge.log(msg);
+        Log.e(TAG,msg);
         write(msg);
     }
 
@@ -46,15 +50,19 @@ public class ConsumeUtil {
                 bw.write(msg);
                 bw.flush();
                 XposedBridge.log("包名符合，记录日志");
+                Log.e(TAG,"包名符合，记录日志");
             }else{
                 XposedBridge.log("非被测应用日志");
+                Log.e(TAG,"非被测应用日志");
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             XposedBridge.log("FileNotFoundException " + e.getMessage());
+            Log.e(TAG,"FileNotFoundException " + e.getMessage());
         } catch (IOException e) {
             e.printStackTrace();
             XposedBridge.log("IOException " + e.getMessage());
+            Log.e(TAG,"IOException " + e.getMessage());
         } finally {
             try {
                 if (bw != null)

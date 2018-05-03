@@ -2,6 +2,7 @@ package com.huawei.autoconsume;
 
 import android.os.Environment;
 import android.text.TextUtils;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,6 +18,8 @@ import java.io.UnsupportedEncodingException;
 import de.robv.android.xposed.XposedBridge;
 
 public class FileUtil {
+
+    public static final String TAG = "autoConsume";
 
     /**
      * 日志文件
@@ -41,16 +44,18 @@ public class FileUtil {
      */
     private String getPackageNameFromConfig(){
         String name = "";
-        File file = new File("sdcard/traverseConfig.txt");
+        File file = new File("sdcard/TraverseConfig.txt");
         String configStr = getStrFromFile(file);
         if (!TextUtils.isEmpty(configStr)){
             try {
                 JSONObject jsonObject = new JSONObject(configStr);
                 name = jsonObject.getString("packageName");
                 XposedBridge.log("解析得当前被测包名为：" + name);
+                Log.e(TAG,"解析得当前被测包名为：" + name);
             } catch (JSONException e) {
                 e.printStackTrace();
                 XposedBridge.log(e.getMessage());
+                Log.e(TAG,e.getMessage());
             }
         }
         return name;
@@ -69,14 +74,17 @@ public class FileUtil {
         if (!path.exists()){
             path.mkdirs();
         }
+        Log.e(TAG,"日志文件另路径：" + logFile.getAbsolutePath());
         if (!logFile.exists()){
             try {
                 path.createNewFile();
                 packageName = getPackageNameFromConfig();
                 XposedBridge.log("creat file success filePath=" + logFile.getAbsolutePath());
+                Log.e(TAG,"creat file success filePath=" + logFile.getAbsolutePath());
             } catch (IOException e) {
                 e.printStackTrace();
                 XposedBridge.log("creat file faile " + e.getMessage());
+                Log.e(TAG,"creat file faile " + e.getMessage());
             }
         }
         return logFile;
@@ -96,6 +104,7 @@ public class FileUtil {
      */
     private String getStrFromFile(File file){
         String content = "";
+        Log.e(TAG,"配置文件路径：" + file.getAbsolutePath());
         if (file.exists()){
             String encouding = "UTF-8";
             BufferedReader reader = null;
@@ -112,12 +121,15 @@ public class FileUtil {
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
                 XposedBridge.log(e.getMessage());
+                Log.e(TAG,e.getMessage());
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
                 XposedBridge.log(e.getMessage());
+                Log.e(TAG,e.getMessage());
             } catch (IOException e) {
                 e.printStackTrace();
                 XposedBridge.log(e.getMessage());
+                Log.e(TAG,e.getMessage());
             } finally {
                 if (reader != null){
                     try {
@@ -125,6 +137,7 @@ public class FileUtil {
                     } catch (IOException e) {
                         e.printStackTrace();
                         XposedBridge.log(e.getMessage());
+                        Log.e(TAG,e.getMessage());
                     }
                     reader = null;
                 }
@@ -134,6 +147,7 @@ public class FileUtil {
                     } catch (IOException e) {
                         e.printStackTrace();
                         XposedBridge.log(e.getMessage());
+                        Log.e(TAG,e.getMessage());
                     }
                     isr = null;
                 }
@@ -143,12 +157,14 @@ public class FileUtil {
                     } catch (IOException e) {
                         e.printStackTrace();
                         XposedBridge.log(e.getMessage());
+                        Log.e(TAG,e.getMessage());
                     }
                     fis = null;
                 }
 
             }
         }
+        Log.e(TAG,"解析成功，返回配置文件详情" + content);
         return content;
     }
 
