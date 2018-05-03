@@ -62,11 +62,8 @@ public class FileUtil {
     }
 
     public String getPackageName(){
-        return packageName;
-    }
-
-    public File getLogFile(){
         String path1 = "sdcard" + "/u2test/UiAutomation";
+//        String path1 = "sdcard" + "/traverseTest";
 //        String path1 = Environment.getExternalStorageDirectory() + "/u2test/UiAutomation";
         String path2 = path1 + "/Consume.txt";
         File path = new File(path1);
@@ -87,6 +84,33 @@ public class FileUtil {
                 Log.e(TAG,"creat file faile " + e.getMessage());
             }
         }
+//        return packageName;
+        return "com.waakka.login";
+    }
+
+    public File getLogFile(){
+////        String path1 = "sdcard" + "/u2test/UiAutomation";
+//        String path1 = "sdcard" + "/traverseTest";
+////        String path1 = Environment.getExternalStorageDirectory() + "/u2test/UiAutomation";
+//        String path2 = path1 + "/Consume.txt";
+//        File path = new File(path1);
+//        logFile = new File(path2);
+//        if (!path.exists()){
+//            path.mkdirs();
+//        }
+//        Log.e(TAG,"日志文件另路径：" + logFile.getAbsolutePath());
+//        if (!logFile.exists()){
+//            try {
+//                path.createNewFile();
+//                packageName = getPackageNameFromConfig();
+//                XposedBridge.log("creat file success filePath=" + logFile.getAbsolutePath());
+//                Log.e(TAG,"creat file success filePath=" + logFile.getAbsolutePath());
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//                XposedBridge.log("creat file faile " + e.getMessage());
+//                Log.e(TAG,"creat file faile " + e.getMessage());
+//            }
+//        }
         return logFile;
     }
 

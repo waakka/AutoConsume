@@ -14,6 +14,7 @@ import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
+import static de.robv.android.xposed.XposedHelpers.findClass;
 
 public class MainTest implements IXposedHookLoadPackage {
 
@@ -40,6 +41,10 @@ public class MainTest implements IXposedHookLoadPackage {
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
 
+        if (!lpparam.packageName.equals(FileUtil.getInstance().getPackageName())){
+            return;
+        }
+
         /**
          * 暂时kook view的dispatchTouchEvent
          * 正式hook traverTest的deviceClick
@@ -49,7 +54,6 @@ public class MainTest implements IXposedHookLoadPackage {
                     @Override
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                         MotionEvent event = (MotionEvent) param.args[0];
-//                    XposedBridge.log("****************发生event事件****************");
                         int action = event.getAction();
                         switch(action) {
                             case MotionEvent.ACTION_DOWN:
@@ -83,20 +87,29 @@ public class MainTest implements IXposedHookLoadPackage {
         /**
          * 遍历点击，界面起始节点
          */
-//        findAndHookMethod("com.huawei.traversetest.HookUtil",lpparam.classLoader,
-//                "noticXposed", int.class,new XC_MethodHook(){
+//        findAndHookMethod("com.waakka.login.MainActivity",
+//                lpparam.classLoader,
+//                "isLoginSuc",
+//                String.class,String.class,
+//                new XC_MethodHook(){
 //                    @Override
 //                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-//                        //TODO 记录是否是登录操作（type）,deviceClick方法传递
-//                        type = (Integer) param.args[0];
-//                        //TODO 记录最后一次点击的时间
+//                        type = TYPE_NORMAL;
 //                        lastClickTime = System.currentTimeMillis();
-//                        //TODO 记录最后一次点击时当前activityName ,deviceClick方法传递,对比获得焦点时记录的activityName是否准确
-////                                lastActivityName = "";
 //                    }
 //                    @Override
 //                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-////                    XposedBridge.log("****************结束event事件****************");
+//                    }
+//                });
+//        findAndHookMethod("android.support.test.uiautomator.InteractionController",lpparam.classLoader,
+//                "clickNoSync",int.class,int.class, new XC_MethodHook(){
+//                    @Override
+//                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+//                        type = TYPE_NORMAL;
+//                        lastClickTime = System.currentTimeMillis();
+//                    }
+//                    @Override
+//                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
 //                    }
 //                });
 //        findAndHookMethod("com.huawei.traversetest.test.util.TraverseUtil"
