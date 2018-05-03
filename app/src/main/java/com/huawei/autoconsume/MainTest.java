@@ -44,6 +44,7 @@ public class MainTest implements IXposedHookLoadPackage {
         if (!lpparam.packageName.equals(FileUtil.getInstance().getPackageName())){
             return;
         }
+        XposedBridge.log("lpparam.packageName="+lpparam.packageName);
 
         /**
          * 暂时kook view的dispatchTouchEvent

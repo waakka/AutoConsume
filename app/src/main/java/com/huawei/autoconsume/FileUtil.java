@@ -77,15 +77,12 @@ public class FileUtil {
                 path.createNewFile();
                 packageName = getPackageNameFromConfig();
                 XposedBridge.log("creat file success filePath=" + logFile.getAbsolutePath());
-                Log.e(TAG,"creat file success filePath=" + logFile.getAbsolutePath());
             } catch (IOException e) {
                 e.printStackTrace();
                 XposedBridge.log("creat file faile " + e.getMessage());
-                Log.e(TAG,"creat file faile " + e.getMessage());
             }
         }
-//        return packageName;
-        return "com.waakka.login";
+        return packageName;
     }
 
     public File getLogFile(){
