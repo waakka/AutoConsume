@@ -21,12 +21,6 @@ public class ConsumeUtil {
     public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss SSS");
 
 
-    public static String getTimeStr(long ms){
-        if (ms == -1){
-            return "点击时间未知";
-        }
-        return sdf.format(new Date(ms));
-    }
 
     public static String getCurTimeStr(){
         return sdf.format(new Date());
@@ -35,7 +29,6 @@ public class ConsumeUtil {
 
     public static void showLog(String msg){
         XposedBridge.log(msg);
-        Log.e(TAG,msg);
         write(msg);
     }
 
@@ -44,17 +37,11 @@ public class ConsumeUtil {
         BufferedWriter bw = null;
 
         try {
-            fos = new FileOutputStream(FileUtil.getInstance().getLogFile(),true);
+            fos = new FileOutputStream(FileUtil.getLogFile(),true);
             bw = new BufferedWriter(new OutputStreamWriter(fos));
-//            if (msg.contains(FileUtil.getInstance().getPackageName())){
-//                bw.write(msg);
-//                bw.flush();
-//                XposedBridge.log("包名符合，记录日志");
-//            }else{
-//                XposedBridge.log("非被测应用日志");
-//            }
             bw.write(msg);
             bw.flush();
+            XposedBridge.log("===================成功写入文件===================\n");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             XposedBridge.log("写文件时出错，文件未找到 " + e.getMessage());

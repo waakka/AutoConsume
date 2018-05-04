@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.res.Resources;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 
@@ -25,7 +26,7 @@ public class MainTest implements IXposedHookLoadPackage {
     public static final int TYPE_NORMAL = 0;
     public static final int TYPE_LOGIN = 1;
 
-    private String packageName;
+    private ConfigBeen configBeen;
 
     private long lastClickTime = -1;
     private String lastActivityName = "";
@@ -42,13 +43,14 @@ public class MainTest implements IXposedHookLoadPackage {
 
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
-
-        if (!lpparam.packageName.equalsIgnoreCase(FileUtil.getInstance().getPackageName())){
-            XposedBridge.log("包名不符，配置包名："+ FileUtil.getInstance().getPackageName() +"当前包名："+lpparam.packageName);
+        configBeen = FileUtil.getConfigBeen();
+        if (!lpparam.packageName.equalsIgnoreCase(configBeen.getPackageName())){
+//            XposedBridge.log("包名不符，配置包名："+ configBeen.getPackageName() +"当前包名："+lpparam.packageName);
             return;
-        }else{
-            XposedBridge.log("包名符合，开始hook。配置包名："+ FileUtil.getInstance().getPackageName() +"当前包名："+lpparam.packageName);
         }
+//        else{
+//            XposedBridge.log("包名符合，开始hook。配置包名："+ configBeen.getPackageName() +"当前包名："+lpparam.packageName);
+//        }
 
         /**
          * 暂时kook view的dispatchTouchEvent
@@ -59,15 +61,24 @@ public class MainTest implements IXposedHookLoadPackage {
                     @Override
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                         MotionEvent event = (MotionEvent) param.args[0];
-                        View view = (View) param.thisObject;
-                        int id = view.getId();
-                        Resources resources = view.getResources();
-                        String resourceName = resources.getResourceName(id);
-                        XposedBridge.log("本次操作控件的resourceName = " + resourceName);
-                        //TODO 增加resoureName的判断，如果符合解析的登录button则本次操作为登录操作
                         int action = event.getAction();
                         switch(action) {
                             case MotionEvent.ACTION_UP:
+
+                                View view = (View) param.thisObject;
+                                Resources resources = view.getResources();
+                                String resourceName = resources.getResourceName(view.getId());
+                                TextView tv = (TextView) view;
+                                CharSequence text = tv.getText();
+                                CharSequence contentDescription = tv.getContentDescription();
+                                XposedBridge.log("本次操作控件的resourceName = " + resourceName);
+                                XposedBridge.log("本次操作控件的text = " + text);
+                                XposedBridge.log("本次操作控件的contentDescription = " + contentDescription);
+                                //TODO 增加resoureName的判断，如果符合解析的登录button则本次操作为登录操作
+
+
+
+
                                 lastClickTime = System.currentTimeMillis();
                                 type = TYPE_NORMAL;
                                 break;
@@ -92,8 +103,8 @@ public class MainTest implements IXposedHookLoadPackage {
                         Activity activity = (Activity) param.thisObject;
 //                        XposedBridge.log("activityName = " + activity.getClass().getSimpleName());
                         if(hasFocus){
-                            XposedBridge.log(ConsumeUtil.getCurTimeStr()
-                                    + "****************"+activity.getClass().getName()+"获得焦点 ");
+                            XposedBridge.log("****************" + ConsumeUtil.getCurTimeStr() + "***"
+                                    + activity.getClass().getName()+"获得焦点 ");
                             // 记录当前时间
                             curTime = System.currentTimeMillis();
                             // 记录当前ActivityName
@@ -127,8 +138,8 @@ public class MainTest implements IXposedHookLoadPackage {
                             //归零点击记录
                             lastClickTime = -1;
                         }else{
-                            XposedBridge.log(ConsumeUtil.getCurTimeStr()
-                                    + "****************"+activity.getClass().getName()+"丢失焦点 ");
+                            XposedBridge.log("****************" + ConsumeUtil.getCurTimeStr() + "***"
+                                    + activity.getClass().getName()+"丢失焦点 ");
                         }
                     }
                     @Override
