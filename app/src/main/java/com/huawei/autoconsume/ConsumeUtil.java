@@ -46,19 +46,21 @@ public class ConsumeUtil {
         try {
             fos = new FileOutputStream(FileUtil.getInstance().getLogFile(),true);
             bw = new BufferedWriter(new OutputStreamWriter(fos));
-            if (msg.contains(FileUtil.getInstance().getPackageName())){
-                bw.write(msg);
-                bw.flush();
-                XposedBridge.log("包名符合，记录日志");
-            }else{
-                XposedBridge.log("非被测应用日志");
-            }
+//            if (msg.contains(FileUtil.getInstance().getPackageName())){
+//                bw.write(msg);
+//                bw.flush();
+//                XposedBridge.log("包名符合，记录日志");
+//            }else{
+//                XposedBridge.log("非被测应用日志");
+//            }
+            bw.write(msg);
+            bw.flush();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            XposedBridge.log("FileNotFoundException " + e.getMessage());
+            XposedBridge.log("写文件时出错，文件未找到 " + e.getMessage());
         } catch (IOException e) {
             e.printStackTrace();
-            XposedBridge.log("IOException " + e.getMessage());
+            XposedBridge.log("写文件时出错，IOException " + e.getMessage());
         } finally {
             try {
                 if (bw != null)

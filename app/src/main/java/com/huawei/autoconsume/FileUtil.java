@@ -28,7 +28,7 @@ public class FileUtil {
     /**
      * 被测应用包名
      */
-    private String packageName = "";
+    public String packageName = "";
 
     private static FileUtil instance;
 
@@ -51,63 +51,73 @@ public class FileUtil {
                 JSONObject jsonObject = new JSONObject(configStr);
                 name = jsonObject.getString("packageName");
                 XposedBridge.log("解析得当前被测包名为：" + name);
-                Log.e(TAG,"解析得当前被测包名为：" + name);
             } catch (JSONException e) {
                 e.printStackTrace();
                 XposedBridge.log(e.getMessage());
-                Log.e(TAG,e.getMessage());
             }
+        }else{
+            XposedBridge.log("配置文件为空，暂时返回com.waakka.login");
+            name = "com.waakka.login";
         }
         return name;
     }
 
     public String getPackageName(){
-        String path1 = "sdcard" + "/u2test/UiAutomation";
 //        String path1 = "sdcard" + "/traverseTest";
 //        String path1 = Environment.getExternalStorageDirectory() + "/u2test/UiAutomation";
-        String path2 = path1 + "/Consume.txt";
-        File path = new File(path1);
-        logFile = new File(path2);
-        if (!path.exists()){
-            path.mkdirs();
-        }
-        Log.e(TAG,"日志文件另路径：" + logFile.getAbsolutePath());
+        String path1 = Environment.getExternalStorageDirectory() + "/u2test";
+        String path2 = path1 + "/UiAutomation";
+        String pathtxt = path2 + "/Consume.txt";
+        File file1 = new File(path1);
+        File file2 = new File(path2);
+        logFile = new File(pathtxt);
         if (!logFile.exists()){
+            if (!file1.exists()){
+                file1.mkdirs();
+                XposedBridge.log("创建文件夹成功 file1=" + file1.getAbsolutePath());
+            }
+            if (!file2.exists()){
+                file2.mkdirs();
+                XposedBridge.log("创建文件夹成功 file2=" + file2.getAbsolutePath());
+            }
+            XposedBridge.log("文件不存在，创建文件并解析配置文件");
             try {
-                path.createNewFile();
-                packageName = getPackageNameFromConfig();
-                XposedBridge.log("creat file success filePath=" + logFile.getAbsolutePath());
+                logFile.createNewFile();
+                XposedBridge.log("创建文件成功 logFile=" + logFile.getAbsolutePath() + "解析得包名=" + packageName);
             } catch (IOException e) {
                 e.printStackTrace();
-                XposedBridge.log("creat file faile " + e.getMessage());
+                XposedBridge.log("创建文件失败 " + e.getMessage());
             }
         }
-        return packageName;
+        packageName = getPackageNameFromConfig();
+        return TextUtils.isEmpty(packageName)?"com.waakka.login":packageName;
     }
 
     public File getLogFile(){
-////        String path1 = "sdcard" + "/u2test/UiAutomation";
-//        String path1 = "sdcard" + "/traverseTest";
-////        String path1 = Environment.getExternalStorageDirectory() + "/u2test/UiAutomation";
-//        String path2 = path1 + "/Consume.txt";
-//        File path = new File(path1);
-//        logFile = new File(path2);
-//        if (!path.exists()){
-//            path.mkdirs();
-//        }
-//        Log.e(TAG,"日志文件另路径：" + logFile.getAbsolutePath());
-//        if (!logFile.exists()){
-//            try {
-//                path.createNewFile();
-//                packageName = getPackageNameFromConfig();
-//                XposedBridge.log("creat file success filePath=" + logFile.getAbsolutePath());
-//                Log.e(TAG,"creat file success filePath=" + logFile.getAbsolutePath());
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//                XposedBridge.log("creat file faile " + e.getMessage());
-//                Log.e(TAG,"creat file faile " + e.getMessage());
-//            }
-//        }
+        String path1 = Environment.getExternalStorageDirectory() + "/u2test";
+        String path2 = path1 + "/UiAutomation";
+        String pathtxt = path2 + "/Consume.txt";
+        File file1 = new File(path1);
+        File file2 = new File(path2);
+        logFile = new File(pathtxt);
+        if (!logFile.exists()){
+            if (!file1.exists()){
+                file1.mkdirs();
+                XposedBridge.log("创建文件夹成功 file1=" + file1.getAbsolutePath());
+            }
+            if (!file2.exists()){
+                file2.mkdirs();
+                XposedBridge.log("创建文件夹成功 file2=" + file2.getAbsolutePath());
+            }
+            XposedBridge.log("文件不存在，创建文件并解析配置文件");
+            try {
+                logFile.createNewFile();
+                XposedBridge.log("创建文件成功 logFile=" + logFile.getAbsolutePath() + "解析得包名=" + packageName);
+            } catch (IOException e) {
+                e.printStackTrace();
+                XposedBridge.log("创建文件失败 " + e.getMessage());
+            }
+        }
         return logFile;
     }
 

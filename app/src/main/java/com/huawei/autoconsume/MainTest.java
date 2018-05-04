@@ -1,7 +1,9 @@
 package com.huawei.autoconsume;
 
 import android.app.Activity;
+import android.content.res.Resources;
 import android.view.MotionEvent;
+import android.view.View;
 
 import com.google.gson.Gson;
 
@@ -41,10 +43,12 @@ public class MainTest implements IXposedHookLoadPackage {
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
 
-        if (!lpparam.packageName.equals(FileUtil.getInstance().getPackageName())){
+        if (!lpparam.packageName.equalsIgnoreCase(FileUtil.getInstance().getPackageName())){
+            XposedBridge.log("包名不符，配置包名："+ FileUtil.getInstance().getPackageName() +"当前包名："+lpparam.packageName);
             return;
+        }else{
+            XposedBridge.log("包名符合，开始hook。配置包名："+ FileUtil.getInstance().getPackageName() +"当前包名："+lpparam.packageName);
         }
-        XposedBridge.log("lpparam.packageName="+lpparam.packageName);
 
         /**
          * 暂时kook view的dispatchTouchEvent
@@ -55,81 +59,27 @@ public class MainTest implements IXposedHookLoadPackage {
                     @Override
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                         MotionEvent event = (MotionEvent) param.args[0];
+                        View view = (View) param.thisObject;
+                        int id = view.getId();
+                        Resources resources = view.getResources();
+                        String resourceName = resources.getResourceName(id);
+                        XposedBridge.log("本次操作控件的resourceName = " + resourceName);
+                        //TODO 增加resoureName的判断，如果符合解析的登录button则本次操作为登录操作
                         int action = event.getAction();
                         switch(action) {
-                            case MotionEvent.ACTION_DOWN:
-//                                XposedBridge.log(ConsumeUtil.getCurTimeStr()
-//                                        + "****************本次操作==>ACTION_DOWN  [" + event.getRawX()+"," + event.getRawY() + "]");
-                                break;
-                            case MotionEvent.ACTION_MOVE:
-//                                XposedBridge.log(ConsumeUtil.getCurTimeStr()
-//                                        + "****************本次操作==>ACTION_MOVE  [" + event.getRawX()+"," + event.getRawY() + "]");
-                                break;
                             case MotionEvent.ACTION_UP:
-                                XposedBridge.log(ConsumeUtil.getCurTimeStr()
-                                        + "****************本次操作==>ACTION_UP  [" + event.getRawX()+"," + event.getRawY() + "]");
-                                //TODO 记录最后一次点击的时间
                                 lastClickTime = System.currentTimeMillis();
-                                //TODO 记录最后一次点击时当前activityName ,deviceClick方法传递,对比获得焦点时记录的activityName是否准确
-//                                lastActivityName = "";
-                                //TODO 记录是否是登录操作（type）,deviceClick方法传递
                                 type = TYPE_NORMAL;
                                 break;
                         }
                     }
-
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-//                    XposedBridge.log("****************结束event事件****************");
                     }
                 });
 
 
-        /**
-         * 遍历点击，界面起始节点
-         */
-//        findAndHookMethod("com.waakka.login.MainActivity",
-//                lpparam.classLoader,
-//                "isLoginSuc",
-//                String.class,String.class,
-//                new XC_MethodHook(){
-//                    @Override
-//                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-//                        type = TYPE_NORMAL;
-//                        lastClickTime = System.currentTimeMillis();
-//                    }
-//                    @Override
-//                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-//                    }
-//                });
-//        findAndHookMethod("android.support.test.uiautomator.InteractionController",lpparam.classLoader,
-//                "clickNoSync",int.class,int.class, new XC_MethodHook(){
-//                    @Override
-//                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-//                        type = TYPE_NORMAL;
-//                        lastClickTime = System.currentTimeMillis();
-//                    }
-//                    @Override
-//                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-//                    }
-//                });
-//        findAndHookMethod("com.huawei.traversetest.test.util.TraverseUtil"
-//                ,lpparam.classLoader,
-//                "noticXposed", int.class,new XC_MethodHook(){
-//                    @Override
-//                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-//                        //TODO 记录是否是登录操作（type）,deviceClick方法传递
-//                        type = (Integer) param.args[0];
-//                        //TODO 记录最后一次点击的时间
-//                        lastClickTime = System.currentTimeMillis();
-//                        //TODO 记录最后一次点击时当前activityName ,deviceClick方法传递,对比获得焦点时记录的activityName是否准确
-////                                lastActivityName = "";
-//                    }
-//                    @Override
-//                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-////                    XposedBridge.log("****************结束event事件****************");
-//                    }
-//                });
+
 
         /**
          * 界面绘制结束hook节点
@@ -144,19 +94,19 @@ public class MainTest implements IXposedHookLoadPackage {
                         if(hasFocus){
                             XposedBridge.log(ConsumeUtil.getCurTimeStr()
                                     + "****************"+activity.getClass().getName()+"获得焦点 ");
-                            //TODO 记录当前时间
+                            // 记录当前时间
                             curTime = System.currentTimeMillis();
-                            //TODO 记录当前ActivityName
+                            // 记录当前ActivityName
                             curActivityName = activity.getClass().getName();
-                            //TODO 判断当前失去焦点的activity是否是lastActivityName
+                            // 判断当前失去焦点的activity是否是lastActivityName
                             if (!curActivityName.equals(lastActivityName)){
-                                //TODO 不是则说明发生跳转,生成Consume类并打印
+                                // 不是则说明发生跳转,生成Consume类并打印
                                 if (lastClickTime == -1){
                                     //当前新界面不是通过deviceClick方法触发新界面
                                     //adb启动acctivity或app内部自动跳转或back、home等造成
                                     //暂不处理
                                     Consume consume = new Consume();
-                                    //TODO 起始时间及起始activityName暂不记录
+                                    // 起始时间及起始activityName暂不记录
                                     consume.setStartActivity("");
                                     consume.setStartTime(0);
                                     consume.setStoptActivity(curActivityName);
