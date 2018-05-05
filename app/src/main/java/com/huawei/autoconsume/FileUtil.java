@@ -4,6 +4,7 @@ import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -32,7 +33,22 @@ public class FileUtil {
             try {
                 JSONObject jsonObject = new JSONObject(configStr);
                 configBeen.setPackageName(jsonObject.getString("packageName"));
-//                XposedBridge.log("解析得当前配置文件：" + configBeen.toString());
+                JSONObject loginObj = jsonObject.getJSONObject("login");
+                JSONArray loginCfgObj = loginObj.getJSONArray("loginCfg");
+                for (int i = 0 ; i < loginCfgObj.length() ; i++){
+                    JSONObject o = loginCfgObj.getJSONObject(i);
+                    String execSeq = o.getString("execSeq");
+                    if (execSeq.equals("4")){
+                        String loginBtnId = o.getString("loginBtnId");
+                        String widgetType = o.getString("widgetType");
+                        if (widgetType.equals("1")){
+                            configBeen.setLoginRecId(loginBtnId);
+                        }else{
+                            configBeen.setLoginDesc(loginBtnId);
+                        }
+                    }
+                }
+                XposedBridge.log("解析得当前配置文件：" + configBeen.toString());
             } catch (JSONException e) {
                 e.printStackTrace();
                 XposedBridge.log(e.getMessage());

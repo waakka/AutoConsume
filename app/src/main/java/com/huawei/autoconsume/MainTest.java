@@ -2,6 +2,7 @@ package com.huawei.autoconsume;
 
 import android.app.Activity;
 import android.content.res.Resources;
+import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -64,23 +65,40 @@ public class MainTest implements IXposedHookLoadPackage {
                         int action = event.getAction();
                         switch(action) {
                             case MotionEvent.ACTION_UP:
+                                //默认为常规界面跳转
+                                type = TYPE_NORMAL;
 
+                                //TODO 增加resoureName的判断，如果符合解析的登录button则本次操作为登录操作
                                 View view = (View) param.thisObject;
+
                                 Resources resources = view.getResources();
                                 String resourceName = resources.getResourceName(view.getId());
-                                TextView tv = (TextView) view;
-                                CharSequence text = tv.getText();
-                                CharSequence contentDescription = tv.getContentDescription();
-                                XposedBridge.log("本次操作控件的resourceName = " + resourceName);
-                                XposedBridge.log("本次操作控件的text = " + text);
-                                XposedBridge.log("本次操作控件的contentDescription = " + contentDescription);
-                                //TODO 增加resoureName的判断，如果符合解析的登录button则本次操作为登录操作
+                                if (!TextUtils.isEmpty(configBeen.getLoginRecId()) && !TextUtils.isEmpty(resourceName)){
+                                    if (configBeen.getLoginRecId().equalsIgnoreCase(resourceName)){
+                                        XposedBridge.log("本次操作控件符合登录按钮的resourceName = " + resourceName);
+                                        type = TYPE_LOGIN;
+                                    }
+                                }
 
+                                TextView tv = (TextView) view;
+                                //强转view为TextView获取控件的text及description
+                                if(tv!=null){
+                                    CharSequence contentDescription = tv.getContentDescription();
+                                    XposedBridge.log("本次操作控件的contentDescription = " + contentDescription);
+
+                                    CharSequence text = tv.getText();
+                                    if (!TextUtils.isEmpty(configBeen.getLoginDesc()) && text != null){
+                                        XposedBridge.log("本次操作控件符合登录按钮的text = " + text);
+                                        if (configBeen.getLoginDesc().equalsIgnoreCase(text.toString())){
+                                            type = TYPE_LOGIN;
+                                        }
+                                    }
+                                }
 
 
 
                                 lastClickTime = System.currentTimeMillis();
-                                type = TYPE_NORMAL;
+
                                 break;
                         }
                     }
